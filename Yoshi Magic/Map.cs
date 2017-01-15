@@ -18,7 +18,7 @@ namespace Yoshi_Magic {
         public static void initPal(int palos) { //Loads palette data into 32-bit array with reversed format.
             //rom.seek(0x8C88C8);
             for (int i = 0; i < 0xF0; i++) {
-                int palt = Bits.getInt16(rom, palos); palos += 2; //rom.getShort(ref palos);
+                int palt = Bits.GetInt16(rom, palos); palos += 2; //rom.getShort(ref palos);
                 //pal[i] = (short)(((palt & 0x1F) << 10) | (palt & 0x3E0) | (palt >> 10));
                 pal[i] = unchecked((int)0xFF000000) | ((palt & 0x1F) << 0x13) | ((palt & 0x3E0) << 6) | ((palt >> 7) & 0xF8);
             }
@@ -111,7 +111,7 @@ namespace Yoshi_Magic {
             loadTileset(0x3AAC4C + (rom[mapMain++] * 4));
             //Tile Mods Tileset
             int tmAddr = 0x3B7108 + (rom[0x3A78D4 + (Map.mapNum * 0x18) + 0xA] << 3);
-            tsetaddr[2] = 0x9744D0 + Bits.getInt32(rom, 0x9744D0 + (Bits.getInt16(rom, tmAddr + 4) << 2));
+            tsetaddr[2] = 0x9744D0 + Bits.GetInt32(rom, 0x9744D0 + (Bits.GetInt16(rom, tmAddr + 4) << 2));
             //mapMain++;
             loadPal(0x3AAD68 + (rom[mapMain++]));
 
@@ -127,15 +127,15 @@ namespace Yoshi_Magic {
             int FImgsTable = 0x6527F4;// 865274;
             int imgNum = rom[addr++];
             if (imgNum != 0xFF) {
-                Comp.mlssdecd(rom, FImgsTable + Bits.getInt32(rom, FImgsTable + (imgNum * 4)), ram, 0);
+                Comp.mlssdecd(rom, FImgsTable + Bits.GetInt32(rom, FImgsTable + (imgNum * 4)), ram, 0);
             }
             imgNum = rom[addr++];
             if (imgNum != 0xFF) {
-                Comp.mlssdecd(rom, FImgsTable + Bits.getInt32(rom, FImgsTable + (imgNum * 4)), ram, 0x2000);
+                Comp.mlssdecd(rom, FImgsTable + Bits.GetInt32(rom, FImgsTable + (imgNum * 4)), ram, 0x2000);
             }
             imgNum = rom[addr++];
             if (imgNum != 0xFF) {
-                Comp.mlssdecd(rom, FImgsTable + Bits.getInt32(rom, FImgsTable + (imgNum * 4)), ram, 0x4000);
+                Comp.mlssdecd(rom, FImgsTable + Bits.GetInt32(rom, FImgsTable + (imgNum * 4)), ram, 0x4000);
             }
         }
        static int[] tsetaddr = new int[3];// = {0,0,0};
@@ -143,15 +143,15 @@ namespace Yoshi_Magic {
            //0x6FFC20 + (NumericUpDown8.Value << 2)
             int FTsetsTable = 0x6FFC20;
             tsetaddr[0] = -1;
-            int num = Bits.getInt16(rom, addr); addr += 2;
+            int num = Bits.GetInt16(rom, addr); addr += 2;
             if (num != 0xFFFF) {
                 //tsetaddr[0] = rom.getInt32(FTsetsTable + rom.getInt32(FTsetsTable + (num * 4)));
-                tsetaddr[0] = FTsetsTable + Bits.getInt32(rom, FTsetsTable + (num * 4));
+                tsetaddr[0] = FTsetsTable + Bits.GetInt32(rom, FTsetsTable + (num * 4));
             }
             tsetaddr[1] = -1;
-            num = Bits.getInt16(rom, addr);
+            num = Bits.GetInt16(rom, addr);
             if (num != 0xFFFF) {
-                tsetaddr[1] = FTsetsTable + Bits.getInt32(rom, FTsetsTable + (num * 4));
+                tsetaddr[1] = FTsetsTable + Bits.GetInt32(rom, FTsetsTable + (num * 4));
             }
         }
         public static void loadPal(int addr) {
@@ -168,7 +168,7 @@ namespace Yoshi_Magic {
             for (int row = 0; row <= 0xB8; row += 8) {
                 for (int col = 0; col <= 0xF8; col += 8) {
                     for (int y = row; y <= row + 7; y++) {
-                        int pix = Bits.getInt32(ram, pos); pos += 4;
+                        int pix = Bits.GetInt32(ram, pos); pos += 4;
                         for (int x = col; x <= col + 7; x++) {
                             bmpdata[(y << 8) + x] = pal[pix & 0xF];
                             pix >>= 4;
@@ -201,7 +201,7 @@ namespace Yoshi_Magic {
                         for (int c = col; c < col + 16; c += 8) {
                             //int tile = rom.getInt16(tsetaddr[0] + tspos); tspos += 2;
                             int tile;
-                            if (tsetaddr[tspos >> 12] == -1) { tile = 0; } else { tile = Bits.getInt16(rom, tsetaddr[tspos >> 12] + (tspos & 0xFFF)); tspos += 2; } //tspos &= 0xFFF;
+                            if (tsetaddr[tspos >> 12] == -1) { tile = 0; } else { tile = Bits.GetInt16(rom, tsetaddr[tspos >> 12] + (tspos & 0xFFF)); tspos += 2; } //tspos &= 0xFFF;
                             int pos = (tile & 0x3FF) << 5;
                             int tilePal = (tile >> 8) & 0xF0;
                             //int x1, x2, xi, y1, y2, yi; // Not sure how I wanted flipping coded in?  Alternative below, though!
@@ -209,7 +209,7 @@ namespace Yoshi_Magic {
                             //if ((tile & 0x800) == 0) { y1 = 0; y2 = 7; yi = 1; } else { y1 = 7; y2 = 0; yi = -1; };
                             for (int y = r; y <= r + 7; y++) {
                                 int ry = y; if ((tile & 0x800) != 0) { ry = r + ((7 - y) & 7); } //Vert. flip
-                                int pix = Bits.getInt32(ram, pos); pos += 4;
+                                int pix = Bits.GetInt32(ram, pos); pos += 4;
                                 for (int x = c; x <= c + 7; x++) {
                                     int rx = x; if ((tile & 0x400) != 0) { rx = c + ((7 - x) & 7); } //Horr. flip
                                     bmpdata[(ry  << 9)  + rx] = pal[tilePal | (pix & 0xF)];
@@ -227,9 +227,9 @@ namespace Yoshi_Magic {
             byte[] mdl1 = rom;
             int width = 0, height = 0;
             for (int mapl = 0; mapl < 6; mapl+=2) {
-                int layi = Bits.getInt16(rom, 0x3AAE08 + (mapNum * 8) + mapl);
+                int layi = Bits.GetInt16(rom, 0x3AAE08 + (mapNum * 8) + mapl);
                 if (layi != 0xFFFF) { // null; }
-                    int a = 0x754D74 + Bits.getInt32(rom, 0x754D74 + (layi * 4));
+                    int a = 0x754D74 + Bits.GetInt32(rom, 0x754D74 + (layi * 4));
                     if (width < mdl1[a]) { width = mdl1[a]; }
                     if (height < mdl1[a+1]) { height = mdl1[a+1]; }
                 }
@@ -269,12 +269,12 @@ namespace Yoshi_Magic {
             //PREPARE BLENDING INFO!
              blendflag = new byte[(width * height)>>3];
             int bldaddr = 0x3B78AC + (rom[0x3A78D4 + (mapNum * 0x18) + 0x9] << 3);
-            bldmod = Bits.getInt32(rom, bldaddr);
+            bldmod = Bits.GetInt32(rom, bldaddr);
             bldmod = ((bldmod & 0xFC0) << 2) | (bldmod & 0x3F);
-            int evaddr = Bits.getInt32(rom, bldaddr + 4);
+            int evaddr = Bits.GetInt32(rom, bldaddr + 4);
             if (evaddr != 0) {
                 bldmod |= 0x40;
-                int evdata = Bits.getInt32(rom, evaddr & 0x1FFFFFF);
+                int evdata = Bits.GetInt32(rom, evaddr & 0x1FFFFFF);
                 eva = evdata & 0x1F;
                 evb = (evdata >> 5) & 0x1F;
             }
@@ -326,11 +326,11 @@ namespace Yoshi_Magic {
             //Solidity Map
             if ((visf & 0x10) != 0) {
                 int[] bmpdata2 = new int[width * height];
-                int solidloc = 0x8E08E0 + Bits.getInt32(rom, 0x8E08E0 + (Bits.getInt16(rom, 0x3AAE08 + (mapNum * 8) + 6) * 4));
-                int solidset = Bits.getInt32(rom, 0x3AADD0 + (rom[0x3A78D4 + (mapNum * 0x18) + 6] * 4)) & 0x1FFFFFF;
+                int solidloc = 0x8E08E0 + Bits.GetInt32(rom, 0x8E08E0 + (Bits.GetInt16(rom, 0x3AAE08 + (mapNum * 8) + 6) * 4));
+                int solidset = Bits.GetInt32(rom, 0x3AADD0 + (rom[0x3A78D4 + (mapNum * 0x18) + 6] * 4)) & 0x1FFFFFF;
                 for (int r = 0; r < height; r += 16) {
                     for (int c = 0; c < width; c += 16) {
-                        int solidinfo = Bits.getInt32(rom, solidset + (rom[solidloc++] * 4));
+                        int solidinfo = Bits.GetInt32(rom, solidset + (rom[solidloc++] * 4));
                         applySolidityTile(bmpdata2, width, c, r, solidinfo);
                     }
                 }
@@ -340,7 +340,7 @@ namespace Yoshi_Magic {
             }
             //Warps
             if ((visf & 0x100) != 0) {
-                int wptr = Bits.getInt32(rom, 0x3AF418 + Map.mapNum * 4) & 0x1FFFFFF; //0xA52A2A //Brown
+                int wptr = Bits.GetInt32(rom, 0x3AF418 + Map.mapNum * 4) & 0x1FFFFFF; //0xA52A2A //Brown
                 do {
                     //Area
                     //for (int b = rom[wptr + 1] * 16; b < rom[wptr + 3] * 16 + 15; b++) {
@@ -738,18 +738,18 @@ namespace Yoshi_Magic {
            if (((visf >> ((layiOffset >> 1) + 1)) & 1) == 0) { return; }
            //Tile Mod switch...
            int tmAddr = 0x3B7108 + (rom[0x3A78D4 + (Map.mapNum * 0x18) + 0xA] << 3);
-           tmAddr = Bits.getInt32(rom, tmAddr);
+           tmAddr = Bits.GetInt32(rom, tmAddr);
            if (Map.tileModCur == -1) { tmAddr = 0; }
            if (tmAddr != 0) {
                tmAddr &= 0x1FFFFFF;
                tmAddr += Map.tileModCur * 0x14;
-               tmAddr = Bits.getInt32(rom, tmAddr + ((4-layiOffset)<<1)) & 0x1FFFFFF;
+               tmAddr = Bits.GetInt32(rom, tmAddr + ((4-layiOffset)<<1)) & 0x1FFFFFF;
            }
            //Regular Tilemap stuff...
-           int layi = Bits.getInt16(rom, 0x3AAE08 + (mapNum * 8) + layiOffset);
+           int layi = Bits.GetInt16(rom, 0x3AAE08 + (mapNum * 8) + layiOffset);
            layiOffset = 8 >> (layiOffset >> 1);//For blending.
            if (layi == 0xFFFF) { return; }// null; }
-           int a = 0x754D74 + Bits.getInt32(rom, 0x754D74 + (layi * 4));
+           int a = 0x754D74 + Bits.GetInt32(rom, 0x754D74 + (layi * 4));
            //0x754D74
            byte[] mdl1 = rom;
            int scnw = mdl1[a++] * 240;
@@ -772,17 +772,17 @@ namespace Yoshi_Magic {
                            if (((rom[tmAddr] * 16) <= row) && (row < ((rom[tmAddr] + rom[tmAddr + 2]) * 16))
                                && ((rom[tmAddr + 1] * 16) <= col) && (col < ((rom[tmAddr + 1] + rom[tmAddr + 3]) * 16))) {
                                //tspos = 0;
-                               //tspos = 0x7FF & Bits.getInt16(rom, tmAddr + 4
+                               //tspos = 0x7FF & Bits.GetInt16(rom, tmAddr + 4
                                //     + (((((row >> 4) - rom[tmAddr + 0]) * rom[tmAddr + 3])
                                //     + ((col >> 4) - rom[tmAddr + 1])) << 1));
-                               int tspos2 = Bits.getInt16(rom, tmAddr + 4 + tma) * 8; tma += 2;
+                               int tspos2 = Bits.GetInt16(rom, tmAddr + 4 + tma) * 8; tma += 2;
                                if (tspos2 != 0) { tspos = tspos2; }
                            }
                        }
                        for (int r = row; r < row + 16; r += 8) {
                            for (int c = col; c < col + 16; c += 8) {
                                //int tile = rom.getInt16(tsetaddr[0] + tspos); tspos += 2;
-                               int tile = Bits.getInt16(rom, tsetaddr[tspos >> 12] + (tspos & 0xFFF)); tspos += 2; //tspos &= 0xFFF;
+                               int tile = Bits.GetInt16(rom, tsetaddr[tspos >> 12] + (tspos & 0xFFF)); tspos += 2; //tspos &= 0xFFF;
                                int pos = (tile & 0x3FF) << 5;
                                int tilePal = (tile >> 8) & 0xF0;
                                //Table test
@@ -904,18 +904,18 @@ namespace Yoshi_Magic {
             if ((visf & 0x20) == 0) {
                 //Display the NPCs (Not sure where/how the best way to do this.)
                 try {
-                    int objsAddr = Bits.getInt32(rom, 0x3D6C58 + (mapNum << 2)) & 0x1FFFFFF; //TODO: Swap mapNum for value in Room Properties.
-                    int amts = Bits.getInt16(rom, objsAddr);
-                    int sprsAddr = objsAddr - Bits.getInt16(rom, objsAddr + 2);
-                    int palsAddr = objsAddr - Bits.getInt16(rom, objsAddr + 4);
-                    objsAddr = objsAddr - Bits.getInt16(rom, objsAddr + 6);
+                    int objsAddr = Bits.GetInt32(rom, 0x3D6C58 + (mapNum << 2)) & 0x1FFFFFF; //TODO: Swap mapNum for value in Room Properties.
+                    int amts = Bits.GetInt16(rom, objsAddr);
+                    int sprsAddr = objsAddr - Bits.GetInt16(rom, objsAddr + 2);
+                    int palsAddr = objsAddr - Bits.GetInt16(rom, objsAddr + 4);
+                    objsAddr = objsAddr - Bits.GetInt16(rom, objsAddr + 6);
                     for (int numObj = amts >> 11; 0 < numObj; numObj--) { //Number of objects.
                         //loadSprite(bmpdata, 0x3000, 0, width);
                         int sprNum = rom[objsAddr + 5] & 0x7F;
                         if (sprNum == 0x7F) { objsAddr += 0x14; continue; }
-                        sprNum = Bits.getInt16(rom, sprsAddr + ((sprNum) << 1));
+                        sprNum = Bits.GetInt16(rom, sprsAddr + ((sprNum) << 1));
                         int palNum = rom[objsAddr + 6] & 0x3F;
-                        palNum = Bits.getInt16(rom, palsAddr + ((palNum) << 1));
+                        palNum = Bits.GetInt16(rom, palsAddr + ((palNum) << 1));
                         int x = ((int)rom[objsAddr] << 4) + ((int)rom[objsAddr + 3] << 27 >> 27);
                         int y = ((int)rom[objsAddr + 1] << 4) + ((int)rom[objsAddr + 4] << 27 >> 27);
                         int z = (((int)rom[objsAddr + 2] & 0x7F) << 3)
@@ -931,28 +931,28 @@ namespace Yoshi_Magic {
                 } catch { }
                 //Display non-scripted Item Blocks! (Includes mole (X) treasure as well.)
                 try {
-                    int sblkAddr = Bits.getInt32(rom, 0x51FA00 + (mapNum << 2)) & 0x1FFFFFF;
+                    int sblkAddr = Bits.GetInt32(rom, 0x51FA00 + (mapNum << 2)) & 0x1FFFFFF;
                     int blks = rom[sblkAddr];
-                    sblkAddr -= Bits.getInt16(rom, sblkAddr + 3);
+                    sblkAddr -= Bits.GetInt16(rom, sblkAddr + 3);
                     while (blks-- > 0) {
-                        int coordPos = Bits.getInt16(rom, sblkAddr + 4);
+                        int coordPos = Bits.GetInt16(rom, sblkAddr + 4);
                         int x = ((int)rom[sblkAddr + 1] << 4) + (((coordPos << 28 >> 28) << 1) | (rom[sblkAddr + 3] >> 7));
                         int y = ((int)rom[sblkAddr + 2] << 4) + (coordPos << 23 >> 27);
                         int z = ((int)(rom[sblkAddr + 3] & 0x7F) << 3) + (coordPos << 16 >> 25);
                         switch (rom[sblkAddr]) {
                             case 0x00: //Normal yellow block
                             case 0x10: //Hidden blocks
-                                loadSprite(bmpdata, Bits.getInt16(rom, 0x3A0CF8), Bits.getInt16(rom, 0x3A0CFA), x, y, z, width);
+                                loadSprite(bmpdata, Bits.GetInt16(rom, 0x3A0CF8), Bits.GetInt16(rom, 0x3A0CFA), x, y, z, width);
                                 break;
                             case 0x20: //Green block
-                                loadSprite(bmpdata, Bits.getInt16(rom, 0x3A0D00), Bits.getInt16(rom, 0x3A0D02), x, y, z, width);
+                                loadSprite(bmpdata, Bits.GetInt16(rom, 0x3A0D00), Bits.GetInt16(rom, 0x3A0D02), x, y, z, width);
                                 break;
                             case 0x40: //Red block
-                                loadSprite(bmpdata, Bits.getInt16(rom, 0x3A0CFC), Bits.getInt16(rom, 0x3A0CFE), x, y, z, width);
+                                loadSprite(bmpdata, Bits.GetInt16(rom, 0x3A0CFC), Bits.GetInt16(rom, 0x3A0CFE), x, y, z, width);
                                 break;
                             default:
-                                //loadSprite(bmpdata, Bits.getInt16(rom, 0x3A0D04), Bits.getInt16(rom, 0x3A0D06), x, y - z, width);
-                                //loadSprite(bmpdata, Bits.getInt16(rom, 0x3A0D04), 3, x, y - z, width);
+                                //loadSprite(bmpdata, Bits.GetInt16(rom, 0x3A0D04), Bits.GetInt16(rom, 0x3A0D06), x, y - z, width);
+                                //loadSprite(bmpdata, Bits.GetInt16(rom, 0x3A0D04), 3, x, y - z, width);
                                 // if ((rom[sblkAddr] != 0xA0) && (rom[sblkAddr] != 0xC0)) {
                                     // Console.WriteLine(sblkAddr.ToString("X8") + ":" + rom[sblkAddr].ToString("X2"));
                                 // }
@@ -968,38 +968,38 @@ namespace Yoshi_Magic {
         }
         static void loadSprite(int[] bmpdata, int sprNum, int palNum, int aniNum, int x1, int y1, int z1, int bitmapWidth) {
             //Priority check! @Collision Lookup - Swap bitmapWidth for Ground layer's width? (To fix some seabed map(s))
-            //int cTile = rom[0x8E08E0 + Bits.getInt32(rom, 0x8E08E0 + mapNum*4) + (bitmapWidth>>4)*y1+x1];
-            int solidloc = 0x8E08E0 + Bits.getInt32(rom, 0x8E08E0 + (Bits.getInt16(rom, 0x3AAE08 + (mapNum * 8) + 6) * 4));
-            int solidset = Bits.getInt32(rom, 0x3AADD0 + (rom[0x3A78D4 + (mapNum * 0x18) + 6] * 4)) & 0x1FFFFFF;
+            //int cTile = rom[0x8E08E0 + Bits.GetInt32(rom, 0x8E08E0 + mapNum*4) + (bitmapWidth>>4)*y1+x1];
+            int solidloc = 0x8E08E0 + Bits.GetInt32(rom, 0x8E08E0 + (Bits.GetInt16(rom, 0x3AAE08 + (mapNum * 8) + 6) * 4));
+            int solidset = Bits.GetInt32(rom, 0x3AADD0 + (rom[0x3A78D4 + (mapNum * 0x18) + 6] * 4)) & 0x1FFFFFF;
             //for (int r = 0; r < height; r += 16) {
             //for (int c = 0; c < width; c += 16) {
-            int solidinfo = Bits.getInt32(rom, solidset + (rom[solidloc + (bitmapWidth >> 4) * (y1 >> 4) + (x1 >> 4)] * 4));
+            int solidinfo = Bits.GetInt32(rom, solidset + (rom[solidloc + (bitmapWidth >> 4) * (y1 >> 4) + (x1 >> 4)] * 4));
             if (priog != ((solidinfo >> 0x18) & 3)) { return; }//Only groun priority. TODO: Add ledge priorties as well.
             y1 -= z1;
             //Sprite lookup!
             //sprNum = 0x3000;
-            int main = Bits.getInt32(rom, (Bits.getInt32(rom, 0x39EE60 + (sprNum >> 12) * 4 - 4) & 0x1FFFFFF) + (sprNum & 0xFFF) * 4);
-            int animain = Bits.getInt32(rom, (Bits.getInt32(rom, 0x39EE8C + (sprNum >> 12) * 4 - 4) & 0x1FFFFFF) + (((main >> 0x12) & 0x1FF) * 4)) & 0x1FFFFFF;
+            int main = Bits.GetInt32(rom, (Bits.GetInt32(rom, 0x39EE60 + (sprNum >> 12) * 4 - 4) & 0x1FFFFFF) + (sprNum & 0xFFF) * 4);
+            int animain = Bits.GetInt32(rom, (Bits.GetInt32(rom, 0x39EE8C + (sprNum >> 12) * 4 - 4) & 0x1FFFFFF) + (((main >> 0x12) & 0x1FF) * 4)) & 0x1FFFFFF;
             //Ani Numeric Start
             //int seqs = rom.buffer[animain + 7]; //Listbox...
-            int clipsList = animain - Bits.getInt16(rom, animain);
+            int clipsList = animain - Bits.GetInt16(rom, animain);
             //int clipsTotal = rom.buffer[clipsList];
             //Ani Numeric End
             //Animation List - Listbox 2 (Ignored)
-            int sprshtsize = Bits.getInt16(rom, animain + 4) & 0x1FF;
+            int sprshtsize = Bits.GetInt16(rom, animain + 4) & 0x1FF;
 
             //PALETTE STUFF!
-            //int main2 = Bits.getInt32(rom, (Bits.getInt32(rom, 0x39EE60 + (palNum >> 12) * 4 - 4) & 0x1FFFFFF) + (palNum & 0xFFF) * 4);
-            int palmain = Bits.getInt32(rom, (Bits.getInt32(rom, 0x39EEE4 + (palNum >> 12) * 4 - 4) & 0x1FFFFFF) + ((palNum & 0x1FF) * 4)) & 0x1FFFFFF;
+            //int main2 = Bits.GetInt32(rom, (Bits.GetInt32(rom, 0x39EE60 + (palNum >> 12) * 4 - 4) & 0x1FFFFFF) + (palNum & 0xFFF) * 4);
+            int palmain = Bits.GetInt32(rom, (Bits.GetInt32(rom, 0x39EEE4 + (palNum >> 12) * 4 - 4) & 0x1FFFFFF) + ((palNum & 0x1FF) * 4)) & 0x1FFFFFF;
             //palmain + ((row * 16 + col) * 2
             int[] sprpal = new int[16];
             for (int i = 0; i < 0x10; i++) {
-                int palt = Bits.getInt16(rom, palmain); palmain += 2;
+                int palt = Bits.GetInt16(rom, palmain); palmain += 2;
                 sprpal[i] = unchecked((int)0xFF000000) | ((palt & 0x1F) << 0x13) | ((palt & 0x3E0) << 6) | ((palt >> 7) & 0xF8);
             }
 
-            int sprtblbase = Bits.getInt32(rom, 0x39EEB8 + (sprNum >> 12) * 4 - 4) & 0x1FFFFFF;
-            int sprmain = sprtblbase + Bits.getInt32(rom, sprtblbase + (((main >> 9) & 0x1FF) * 4));
+            int sprtblbase = Bits.GetInt32(rom, 0x39EEB8 + (sprNum >> 12) * 4 - 4) & 0x1FFFFFF;
+            int sprmain = sprtblbase + Bits.GetInt32(rom, sprtblbase + (((main >> 9) & 0x1FF) * 4));
 
             //(main >> &H1B) And &H1F
             if ((main >> 0x1F) == 0) { Comp.mlssdecd(rom, sprmain, ram, 0x10000); }//Compressed?
@@ -1011,8 +1011,8 @@ namespace Yoshi_Magic {
 
             if (((main >> 0x1C) & 7) > 1) { aniNum = rom[0x3A05EC + (((main >> 0x1C) & 7) << 3) + aniNum]; }
             int horflip = aniNum >> 7; aniNum &= 0x7F;
-            int frameClip = rom[animain + Bits.getInt16(rom, animain + 8 + (aniNum << 1)) + 1];
-            int clipa = clipsList + Bits.getInt16(rom, clipsList + 1 + (frameClip * 2));
+            int frameClip = rom[animain + Bits.GetInt16(rom, animain + 8 + (aniNum << 1)) + 1];
+            int clipa = clipsList + Bits.GetInt16(rom, clipsList + 1 + (frameClip * 2));
             //MessageBox.Show(clipa.ToString("X8"));
             int layers = rom[clipa++];
             if ((layers >> 7) == 1) { //Special Layers (Includes Rot/Scale)
@@ -1020,7 +1020,7 @@ namespace Yoshi_Magic {
                 layers = rom[clipa++];
             }
             //int ss = {0, 24, 0, 24, 26, 26};
-            int tilesList = animain - Bits.getInt16(rom, animain + 2);
+            int tilesList = animain - Bits.GetInt16(rom, animain + 2);
             int maxLayers = rom[animain + 6] & 0x7F;
             int x=0, y=0, q = 0, t = 0, tx = 0, ty = 0;
             int clipType = rom[clipa++];
@@ -1257,13 +1257,13 @@ namespace Yoshi_Magic {
             tileAniNext2();
         }
         public static void palAniNext() { //Palette Animations
-            int pntr = Bits.getInt32(rom, 0x3B79C4 + (rom[0x3A78D4 + (mapNum * 0x18) + 0x8] << 2));
+            int pntr = Bits.GetInt32(rom, 0x3B79C4 + (rom[0x3A78D4 + (mapNum * 0x18) + 0x8] << 2));
             if (pntr == 0) { return; }
             pntr &= 0x1FFFFFF;
             int mdat, a = 0;
             do {
-                mdat = Bits.getInt32(rom, pntr); pntr += 4;
-                int pntr2 = Bits.getInt32(rom, (Bits.getInt32(rom, 0x2011B4 + 0x14) & 0x1FFFFFF) + (mdat >> 8 << 2)) & 0x1FFFFFF;
+                mdat = Bits.GetInt32(rom, pntr); pntr += 4;
+                int pntr2 = Bits.GetInt32(rom, (Bits.GetInt32(rom, 0x2011B4 + 0x14) & 0x1FFFFFF) + (mdat >> 8 << 2)) & 0x1FFFFFF;
                 //^TODO:  Check if this mdat index is 8-bit or 24-bit.
                 //pntr2 = 
                 if (frmpcnt[a]++ == rom[pntr2 + 0x4]) {
@@ -1282,19 +1282,19 @@ namespace Yoshi_Magic {
             } while ((mdat & 0x80) == 0);
         } 
        public static void tileAniNext2() {//Tile Animations
-            int pntr = Bits.getInt32(rom, 0x3B283C + (rom[0x3A78D4 + (mapNum * 0x18) + 0x7] << 2));
+            int pntr = Bits.GetInt32(rom, 0x3B283C + (rom[0x3A78D4 + (mapNum * 0x18) + 0x7] << 2));
             if (pntr == 0) { return; }
             pntr &= 0x1FFFFFF;
             int mdat, a = 0;
             do {
-                mdat = Bits.getInt32(rom, pntr);
+                mdat = Bits.GetInt32(rom, pntr);
                 if ((mdat & 0x40) == 0) { //No auto-animating flag on Room Load. (Manual activate) Note: mdat & 0x200 = No loop.
                     if (frmcnt[a] == 0) {
-                        int pntr2 = (Bits.getInt32(rom, pntr + 4) & 0x1FFFFFF) + (frmnum[a] << 2);
+                        int pntr2 = (Bits.GetInt32(rom, pntr + 4) & 0x1FFFFFF) + (frmnum[a] << 2);
                         if ((rom[pntr2 + 3] >> 7) == 0) { frmnum[a]++; } else { frmnum[a] = 0; }
                         frmcnt[a] = rom[pntr2 + 2];
                         //Get Tile Animation Graphics
-                        pntr2 = 0x940C9C + Bits.getInt32(rom, 0x940C9C + (Bits.getInt16(rom, pntr2) << 2));
+                        pntr2 = 0x940C9C + Bits.GetInt32(rom, 0x940C9C + (Bits.GetInt16(rom, pntr2) << 2));
                         for (int i = ((mdat & 0x1F00000) >> 15); i > 0; i--) {
                             ram[((mdat & 0xFFC00) >> 5) + i] = rom[pntr2 + i];
                         }

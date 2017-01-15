@@ -14,27 +14,10 @@ namespace Yoshi_Magic {
         //string path = null;
         //int pos = 0;
 
-        static public byte[] openFile(string filename) {
-            //DateTime a = DateTime.Now;
-            //int var1 = 0;
-            //byte[] rom = System.IO.File.ReadAllBytes(filename); //add catch?
-            //for (int i = 0; i < 0x1000000; i+=4) {
-            //    var1 ^= Bits.getInt32(rom, i);
-            //}
-            //DateTime b = DateTime.Now;
-            //Console.WriteLine(var1 + " " + (b - a).ToString());
-            //DateTime c = DateTime.Now;
-            //int var2 = 0;
-            //BinaryReader rom2 = new BinaryReader(new FileStream(filename, FileMode.Open)); //add catch?
-            //for (int j = 0; j < 0x1000000; j += 4) {
-            //    var2 ^= rom2.ReadInt32();//Bits.getInt32(rom, i);
-            //}
-            //rom2.Close();
-            //DateTime d = DateTime.Now;
-            //Console.WriteLine(var2 + " " + (d - c).ToString());
+        public static byte[] OpenFile(string filename) {
             return System.IO.File.ReadAllBytes(filename); //add catch?
         }
-        static public void saveFile(string filename, byte[] buffer) {
+        static public void SaveFile(string filename, byte[] buffer) {
             System.IO.File.WriteAllBytes(filename, buffer);
         }
         static public void fastCopy(string source, string destination) {
@@ -105,13 +88,13 @@ namespace Yoshi_Magic {
         //public int getShort(byte[] buffer, ref int pos) { //(int addr)
         //    return buffer[pos++] | (buffer[pos++] << 8);
         //}
-        static public int getInt16(byte[] buffer, int pos) { //(int addr)
-            return buffer[pos++] | (buffer[pos] << 8);
+        public static short GetInt16(byte[] buffer, int pos) { //(int addr)
+            return (short)(buffer[pos++] | (buffer[pos] << 8));
         }
-        static public int getInt32(byte[] buffer, int pos) { //(int addr)
+        public static int GetInt32(byte[] buffer, int pos) { //(int addr)
             return buffer[pos++] | (buffer[pos++] << 8) | buffer[pos++] << 16 | (buffer[pos] << 24);
         }
-        static public void setInt32(byte[] buffer, int pos, int value) { //(int addr)
+        static public void SetInt32(byte[] buffer, int pos, int value) { //(int addr)
             buffer[pos++] = (byte)value; value >>= 8;
             buffer[pos++] = (byte)value; value >>= 8;
             buffer[pos++] = (byte)value; value >>= 8;
@@ -147,15 +130,15 @@ namespace Yoshi_Magic {
             bitindex = (short)r7;
             return readbits;
         }
-        static public string getString(byte[] buffer, int pos, int length) {
-            System.Text.StringBuilder strbuild = new System.Text.StringBuilder(length);
+        static public string GetString(byte[] buffer, int pos, int length) {
+            StringBuilder strbuild = new StringBuilder(length);
             while (length-- > 0) {
                 strbuild.Append((char)buffer[pos++]);
             }
             return strbuild.ToString();
         }
-        static public string getString16V(byte[] buffer, int pos, int untilVal) {
-            System.Text.StringBuilder strbuild = new System.Text.StringBuilder(32);
+        static public string GetString16V(byte[] buffer, int pos, int untilVal) {
+            StringBuilder strbuild = new StringBuilder(32);
             while (untilVal != buffer[pos]) {
                 strbuild.Append((char)buffer[pos++]); pos++;
             }

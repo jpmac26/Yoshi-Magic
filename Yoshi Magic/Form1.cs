@@ -1,12 +1,9 @@
 ﻿// compile with: /unsafe
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Drawing.Imaging; //PixelFormat
 using System.Runtime.InteropServices; //Marshal
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -51,9 +48,9 @@ namespace Yoshi_Magic {
             string vstr = ""; //Dim vstr As String = ""
             if (filename.EndsWith(".gba", true, null)) { //Load entire ROM to buffer; GBA ROMs are maxed at 32 MB.
                 listBox1.Visible = false; textBox1.Visible = false;
-                rom = Bits.openFile(filename);
+                rom = Bits.OpenFile(filename);
                 //rom.seek(0xA0);
-                vstr = Bits.getString(rom, 0xA0, 16);
+                vstr = Bits.GetString(rom, 0xA0, 16);
                 if (vstr != "MARIO&LUIGIUA88E") { return; }
                 ram = new byte[0x40000];
                 loadEntireMap();
@@ -66,13 +63,13 @@ namespace Yoshi_Magic {
                 //0x3AE0 //exefs offset, size
                 byte[] ncch = new byte[0x200];
                 using (FileStream a = new FileStream(filename, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite)) {
-                    a.Seek(0x3940, System.IO.SeekOrigin.Begin); //a.Seek(Bits.getInt32(ncsd, 0x120) << 9, System.IO.SeekOrigin.Begin);
+                    a.Seek(0x3940, System.IO.SeekOrigin.Begin); //a.Seek(Bits.GetInt32(ncsd, 0x120) << 9, System.IO.SeekOrigin.Begin);
                     a.Read(ncch, 0, 0x200);
-                    byte[] temp1 = new byte[Bits.getInt32(ncch, 0x1A4) * 0x200]; //Load from ROM. exefs/.code in uncompressed=max 0x03F00000 bytes
-                    //byte[] temp2 = new byte[Bits.getInt32(ncch, 0x1A4) * 0x200]; //Load from Xorpad.
-                    //Bits.getInt32(ncch, 0x1A0);//ExeFS Offset
-                    a.Seek(0x3940 +( Bits.getInt32(ncch, 0x1A0)) * 0x200, SeekOrigin.Begin);
-                    a.Read(temp1, 0, Bits.getInt32(ncch, 0x1A4) * 0x200);
+                    byte[] temp1 = new byte[Bits.GetInt32(ncch, 0x1A4) * 0x200]; //Load from ROM. exefs/.code in uncompressed=max 0x03F00000 bytes
+                    //byte[] temp2 = new byte[Bits.GetInt32(ncch, 0x1A4) * 0x200]; //Load from Xorpad.
+                    //Bits.GetInt32(ncch, 0x1A0);//ExeFS Offset
+                    a.Seek(0x3940 +( Bits.GetInt32(ncch, 0x1A0)) * 0x200, SeekOrigin.Begin);
+                    a.Read(temp1, 0, Bits.GetInt32(ncch, 0x1A4) * 0x200);
                     //Comp.LZSS_Decompress(temp1, 0x384A18, temp3, 0x5E3000);
                     //41BA00 = exefs size.
                     //6540 = exefs addr.
@@ -123,26 +120,26 @@ namespace Yoshi_Magic {
                         return;
                     }
                     byte[] ncch = new byte[0x200];
-                    a.Seek(Bits.getInt32(ncsd, 0x120) << 9, System.IO.SeekOrigin.Begin);
+                    a.Seek(Bits.GetInt32(ncsd, 0x120) << 9, System.IO.SeekOrigin.Begin);
                     a.Read(ncch, 0, 0x200);
-                    byte[] temp1 = new byte[Bits.getInt32(ncch, 0x1A4) * 0x200]; //Load from ROM. exefs/.code in uncompressed=max 0x03F00000 bytes
-                    byte[] temp2 = new byte[Bits.getInt32(ncch, 0x1A4) * 0x200]; //Load from Xorpad.
-                    //Bits.getInt32(ncch, 0x1A0);//ExeFS Offset
-                    a.Seek((Bits.getInt32(ncsd, 0x120) + Bits.getInt32(ncch, 0x1A0)) * 0x200, SeekOrigin.Begin);
-                    a.Read(temp1, 0, Bits.getInt32(ncch, 0x1A4) * 0x200);
+                    byte[] temp1 = new byte[Bits.GetInt32(ncch, 0x1A4) * 0x200]; //Load from ROM. exefs/.code in uncompressed=max 0x03F00000 bytes
+                    byte[] temp2 = new byte[Bits.GetInt32(ncch, 0x1A4) * 0x200]; //Load from Xorpad.
+                    //Bits.GetInt32(ncch, 0x1A0);//ExeFS Offset
+                    a.Seek((Bits.GetInt32(ncsd, 0x120) + Bits.GetInt32(ncch, 0x1A0)) * 0x200, SeekOrigin.Begin);
+                    a.Read(temp1, 0, Bits.GetInt32(ncch, 0x1A4) * 0x200);
                     //t3 = DateTime.Now;
                     using (FileStream b = new FileStream(xorpad[0], FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) {
-                        //for (int pos1 = 0; pos1 < Bits.getInt32(ncch, 0x1A4) * 0x200; pos1 += 0x200) {
-                        //a.Seek((Bits.getInt32(ncsd, 0x120) + Bits.getInt32(ncch, 0x1A0)) * 0x200 + pos1, System.IO.SeekOrigin.Begin);
-                        ////a.Seek(Bits.getInt32(ncsd, 0x120) * 0x200 + pos1, System.IO.SeekOrigin.Begin);
+                        //for (int pos1 = 0; pos1 < Bits.GetInt32(ncch, 0x1A4) * 0x200; pos1 += 0x200) {
+                        //a.Seek((Bits.GetInt32(ncsd, 0x120) + Bits.GetInt32(ncch, 0x1A0)) * 0x200 + pos1, System.IO.SeekOrigin.Begin);
+                        ////a.Seek(Bits.GetInt32(ncsd, 0x120) * 0x200 + pos1, System.IO.SeekOrigin.Begin);
                         //a.Read(temp1, 0, 0x200);
                         b.Seek(0, SeekOrigin.Begin);
-                        b.Read(temp2, 0, Bits.getInt32(ncch, 0x1A4) * 0x200);
+                        b.Read(temp2, 0, Bits.GetInt32(ncch, 0x1A4) * 0x200);
                         b.Close();
                     }
                     //for (int pos2 = pos1; pos2 < pos1 + 0x200; pos2++) {
 
-                    //for (int pos2 = 0; pos2 < Bits.getInt32(ncch, 0x1A4) * 0x200; pos2++) {
+                    //for (int pos2 = 0; pos2 < Bits.GetInt32(ncch, 0x1A4) * 0x200; pos2++) {
                     //    temp1[pos2] ^= temp2[pos2];
                     //}
                     //t4 = DateTime.Now;
@@ -150,7 +147,7 @@ namespace Yoshi_Magic {
                     fixed (byte* ptemp1 = temp1, ptemp2 = temp2) {
                         byte* pt1 = ptemp1;
                         byte* pt2 = ptemp2;
-                        int pos2end = Bits.getInt32(ncch, 0x1A4) * 0x200;
+                        int pos2end = Bits.GetInt32(ncch, 0x1A4) * 0x200;
                         for (int pos2 = 0; pos2 < pos2end; pos2 += 8) {
                             //TODO: Check ms time of this versus "safe" method. Show progress information on screen.
                             *((long*)(pt1 + pos2)) ^= *((long*)(pt2 + pos2)); //pos2 += 8; 
@@ -169,13 +166,13 @@ namespace Yoshi_Magic {
                     //Going straight to the table; skipping the RomFS tree. Not passing GO!, and not collecting $200.
                     //a.Seek(0x25A6B950, SeekOrigin.Begin);
                     a.Seek(0x25C3E840 - 0x940, SeekOrigin.Begin);
-                    //a.Read(enames, 0, 0xFA0);// Bits.getInt32(ncch, 0x1A4) * 0x200);
+                    //a.Read(enames, 0, 0xFA0);// Bits.GetInt32(ncch, 0x1A4) * 0x200);
                     a.Read(enames, 0, 0x1000);
                     //a.Close();
                     using (FileStream b = new FileStream(xorpad[2], FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) {
                         //b.Seek(0x25A6B950 - 0x434000, SeekOrigin.Begin); //C290
                         b.Seek(0x25C3E840 - 0x434000 - 0x940, SeekOrigin.Begin);
-                        //b.Read(enamesX, 0, 0xFA0); //Bits.getInt32(ncch, 0x1A4) * 0x200);
+                        //b.Read(enamesX, 0, 0xFA0); //Bits.GetInt32(ncch, 0x1A4) * 0x200);
                         b.Read(enamesX, 0, 0x1000);
                         b.Close();
                     }
@@ -184,29 +181,29 @@ namespace Yoshi_Magic {
                         //byte* pXor = fXor;
                         //0x25A6B950 - 0x434000
                         //  25A6C8F0 ; FA0
-                        int pos2end = 0x1000;// 0xFA0;//Bits.getInt32(ncch, 0x1A4) * 0x200;
+                        int pos2end = 0x1000;// 0xFA0;//Bits.GetInt32(ncch, 0x1A4) * 0x200;
                         for (int pos2 = 0; pos2 < pos2end; pos2 += 8) {
                             *((long*)(fRom + pos2)) ^= *((long*)(fXor + pos2)); //pos2 += 8; 
                             //*((long*)(pt1 + pos2)) ^= *((long*)(pt2 + pos2));
                         }
                     }
-                    int amt = Bits.getInt32(enames, 0);
+                    int amt = Bits.GetInt32(enames, 0);
                     string[] enemyStr = new string[amt];
                     while (amt-- != 0) {
-                        enemyStr[amt] = Bits.getString16V(enames, Bits.getInt32(enames, (amt + 1) * 4), 0);
+                        enemyStr[amt] = Bits.GetString16V(enames, Bits.GetInt32(enames, (amt + 1) * 4), 0);
                     }
                     //Enemy Data!
                     StringBuilder str = new StringBuilder(0x200);
                     for (int i = 0; i < 0xB6; i++) {
-                        listBox1.Items.Add(enemyStr[Bits.getInt16(temp3, 0x54CBD8 + (i * 0x3C))]);
+                        listBox1.Items.Add(enemyStr[Bits.GetInt16(temp3, 0x54CBD8 + (i * 0x3C))]);
 
 
-                        str.Append("ID #" + i.ToString("X2") + " " + enemyStr[Bits.getInt16(temp3, 0x54CBD8 + (i * 0x3C))] + "\r\n");
+                        str.Append("ID #" + i.ToString("X2") + " " + enemyStr[Bits.GetInt16(temp3, 0x54CBD8 + (i * 0x3C))] + "\r\n");
                         string[] desc = { "Name Index", "??? MSBs of Name Index?", "", "", "", "", "??? Seems to match entry #", "", "", "", "", "", "? (Left); Level (Right)", "HP", "Power", "Defense", "Speed",
                                 "", "", "", "Exp", "Coins", "Coin Rate", "Item", "Item Chance", "Rare Item", "Rare Item Chance", "", "", "(Unused?)" };
                         //textBox1.Text = "";
                         for (int j = 0; j < 0x1E; j++) {
-                            str.Append(Bits.getInt16(temp3, 0x54CBD8 + ((j * 2) + (i * 0x3C))).ToString("X4") + " = " + desc[j] + "\r\n");
+                            str.Append(Bits.GetInt16(temp3, 0x54CBD8 + ((j * 2) + (i * 0x3C))).ToString("X4") + " = " + desc[j] + "\r\n");
                         }
                         str.Append("\r\n");
                     }
@@ -214,18 +211,18 @@ namespace Yoshi_Magic {
                     //listBox1.SelectedIndexChanged += new System.Windows.Forms.selec;
                     //StringBuilder testt = new StringBuilder(0x4000);
                     //for (int i = 0; i < 0xB6; i++) {
-                    //    testt.AppendLine(enemyStr[Bits.getInt16(temp3, 0x54CBD8 + (i * 0x3C))]);
+                    //    testt.AppendLine(enemyStr[Bits.GetInt16(temp3, 0x54CBD8 + (i * 0x3C))]);
                     //}
                     //textBox1.Text = testt.ToString();
                     //listBox1.Items.AddRange(enemyStr);
-                    //a.Seek((Bits.getInt32(ncsd, 0x120) + Bits.getInt32(ncch, 0x1A0)) * 0x200 + pos1, System.IO.SeekOrigin.Begin);
+                    //a.Seek((Bits.GetInt32(ncsd, 0x120) + Bits.GetInt32(ncch, 0x1A0)) * 0x200 + pos1, System.IO.SeekOrigin.Begin);
                     //a.Write(temp1, 0, 0x200);
                     //}
                     //b.Close();
                     //}
                     //t5 = DateTime.Now;
-                    //a.Seek((Bits.getInt32(ncsd, 0x120) + Bits.getInt32(ncch, 0x1A0)) * 0x200, System.IO.SeekOrigin.Begin);
-                    //a.Write(temp1, 0, Bits.getInt32(ncch, 0x1A4) * 0x200);
+                    //a.Seek((Bits.GetInt32(ncsd, 0x120) + Bits.GetInt32(ncch, 0x1A0)) * 0x200, System.IO.SeekOrigin.Begin);
+                    //a.Write(temp1, 0, Bits.GetInt32(ncch, 0x1A4) * 0x200);
                     a.Close();
                 }
                 //DateTime t6 = DateTime.Now;//.Ticks;
@@ -273,14 +270,14 @@ namespace Yoshi_Magic {
             OpenROMdialogue();
         }
         private void saveToolStripMenuItem_Click(object sender, EventArgs e) {
-            Bits.saveFile(Properties.Settings.Default.LastRom, rom);
+            Bits.SaveFile(Properties.Settings.Default.LastRom, rom);
         }
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e) {
             SaveFileDialog sfd = new SaveFileDialog();
             sfd.Title = "Save ROM File";
             //sfd.Filter = "GBA/NDS/3DS file(*.gba;*.nds;*.3ds)|*.gba;*.nds;*.3ds";
             if (sfd.ShowDialog() == DialogResult.OK)
-                Bits.saveFile(sfd.FileName, rom);
+                Bits.SaveFile(sfd.FileName, rom);
         }
 
         //Bitmap mapimg = new Bitmap(1, 1);//100, 100, PixelFormat.Format16bppArgb1555);
@@ -337,10 +334,10 @@ namespace Yoshi_Magic {
         int[] evDbRef = { 0x282794, 0x2994A4, 0x299AE0 }; 
         int eN = 0, eN2 = 0;
         for (int eventType = 0; eventType < 3; eventType++) { //0-2 = Field, Battle, Suitcase
-            int numOfArgsList = Bits.getInt32(rom, 0x3B98C4 + (eventType << 2)) & 0x1FFFFFF;
-            int isMemSetList = Bits.getInt32(rom, 0x3B9704 + (eventType << 2)) & 0x1FFFFFF;
-            int argsInfoOffsetList = Bits.getInt32(rom, 0x3BA4A8 + (eventType << 2)) & 0x1FFFFFF;
-            int argsbitLenList = Bits.getInt32(rom, 0x3B9D00 + (eventType << 2)) & 0x1FFFFFF;
+            int numOfArgsList = Bits.GetInt32(rom, 0x3B98C4 + (eventType << 2)) & 0x1FFFFFF;
+            int isMemSetList = Bits.GetInt32(rom, 0x3B9704 + (eventType << 2)) & 0x1FFFFFF;
+            int argsInfoOffsetList = Bits.GetInt32(rom, 0x3BA4A8 + (eventType << 2)) & 0x1FFFFFF;
+            int argsbitLenList = Bits.GetInt32(rom, 0x3B9D00 + (eventType << 2)) & 0x1FFFFFF;
             //int argsSignedList =  rom.getInt32(0x... + (eventType << 2)) & 0x1FFFFFF;
             int i = evDbRef[eventType];
             while (addr < i) {
@@ -353,7 +350,7 @@ namespace Yoshi_Magic {
                     d[(eventType << 8) + cmd] += 1;
                 }
                 if ((cmd >= 0xC0) || (cmd==0)) {
-                    Bits.setInt32(d, z, addr - 1); z += 4;
+                    Bits.SetInt32(d, z, addr - 1); z += 4;
                 }
                 //test.Append(cmd.ToString("X2"));
                 //Var Flags for args.
@@ -373,13 +370,13 @@ namespace Yoshi_Magic {
                     }
                 } //else { test.Append(" XXXX"); }
                 //Arg bit lengths
-                int argsInfoOffset = Bits.getInt16(rom, argsInfoOffsetList + cmd * 2);
+                int argsInfoOffset = Bits.GetInt16(rom, argsInfoOffsetList + cmd * 2);
                 while (args-- > 0) {
                     int argVal = 0;
                     int numOfBits = rom[argsbitLenList + argsInfoOffset++];
                     if ((numOfBits >> 7) == 1) { //32-bit Pointer
                         if (bitind != 8) { bitind = 8; addr += 1; }
-                        argVal = Bits.getInt32(rom, addr); addr += 4;
+                        argVal = Bits.GetInt32(rom, addr); addr += 4;
                     } else {
                         argVal = Bits.readbits(rom, ref addr, ref bitind, numOfBits);
                     }
@@ -449,7 +446,7 @@ namespace Yoshi_Magic {
             switch (e.KeyCode) {
                 case (Keys)0x20: //Spacebar
                     int tmAddr = 0x3B7108 + (rom[0x3A78D4 + (Map.mapNum * 0x18) + 0xA] << 3);
-                    tmAddr = Bits.getInt32(rom, tmAddr);
+                    tmAddr = Bits.GetInt32(rom, tmAddr);
                     if (tmAddr == 0) { return; }
                     tmAddr &= 0x1FFFFFF;
                     //toolStripButton5.Text = rom[0x3A78D4 + (Map.mapNum * 0x18) + 0xA].ToString("X") + "   " + tmAddr.ToString("X") + "   " + Map.tileModCur.ToString("X");
@@ -585,10 +582,10 @@ namespace Yoshi_Magic {
                     }
                     int width = 4096;
                     int[] img = new int[4096 * 752];
-                     int solidset = Bits.getInt32(rom, 0x3AADD0 + (rom[0x3A78D4 + (Map.mapNum * 0x18) + 6] * 4)) & 0x1FFFFFF;
+                     int solidset = Bits.GetInt32(rom, 0x3AADD0 + (rom[0x3A78D4 + (Map.mapNum * 0x18) + 6] * 4)) & 0x1FFFFFF;
                 //for (int r = 0; r < height; r += 16) {
                      for (int c = 0; c < width; c += 16) {
-                         int solidinfo = Bits.getInt32(rom, solidset); solidset += 4;
+                         int solidinfo = Bits.GetInt32(rom, solidset); solidset += 4;
                          //int solidinfo = 0;
                          Map.applySolidityTile(img, 4096, c, 752 - 16, solidinfo);
                      }
@@ -626,8 +623,8 @@ namespace Yoshi_Magic {
                 tsTile2 = (e.X >> 4); //MessageBox.Show("X:"+e.X + "   Y:"+e.Y);
                 if (tsTile2 < 0) { tsTile2 = 0; } else if (tsTile2 > 0xFF) { tsTile2 = 0xFF; } //Bounds checking.
                 ((PictureBox)ts.Controls[0]).Invalidate();
-                int solidset = Bits.getInt32(rom, 0x3AADD0 + (rom[0x3A78D4 + (Map.mapNum * 0x18) + 6] * 4)) & 0x1FFFFFF;
-                int solidinfo = Bits.getInt32(rom, solidset + (tsTile2 * 4));
+                int solidset = Bits.GetInt32(rom, 0x3AADD0 + (rom[0x3A78D4 + (Map.mapNum * 0x18) + 6] * 4)) & 0x1FFFFFF;
+                int solidinfo = Bits.GetInt32(rom, solidset + (tsTile2 * 4));
                 ts.Text = solidinfo.ToString("X8");
             }
         }
@@ -649,7 +646,7 @@ namespace Yoshi_Magic {
         void picPlaceMassTiles(int x, int y) {
             if (Map.lastPressedKey == 0x34) {
                 if (!((x >= 0) && (x < pictureBox1.Width) && (y >= 0) && (y < pictureBox1.Height))) { return; }
-                int solidloc = 0x8E08E0 + Bits.getInt32(rom, 0x8E08E0 + (Bits.getInt16(rom, 0x3AAE08 + (Map.mapNum * 8) + 6) * 4));
+                int solidloc = 0x8E08E0 + Bits.GetInt32(rom, 0x8E08E0 + (Bits.GetInt16(rom, 0x3AAE08 + (Map.mapNum * 8) + 6) * 4));
                 if (MouseButtons == MouseButtons.Left) { //Set
                     rom[solidloc + (y >> 4) * (pictureBox1.Width >> 4) + (x >> 4)] = (byte)tsTile2;
                     loadEntireMap();
@@ -682,10 +679,10 @@ namespace Yoshi_Magic {
             if (Map.lastPressedKey == 0x32) { laysel = 2; }
             if (Map.lastPressedKey == 0x33) { laysel = 4; }
             if (laysel == -1) { return; }
-            int layi = Bits.getInt16(rom, 0x3AAE08 + (Map.mapNum * 8) + laysel);
+            int layi = Bits.GetInt16(rom, 0x3AAE08 + (Map.mapNum * 8) + laysel);
             if (layi != 0xFFFF) { // null; }
                 byte[] mdl1 = rom;
-                int a = 0x754D74 + Bits.getInt32(rom, 0x754D74 + (layi * 4));
+                int a = 0x754D74 + Bits.GetInt32(rom, 0x754D74 + (layi * 4));
                 //a += 2 + (mdl1[a] * 15) * (e.Y >> 4); //WIP
                 a += 2 + ((mdl1[a] * 20) - ((mdl1[a] >> 2) * 5)) * (y >> 4); //WIP
                 // a += 2 + ((mdl1[a] * 19) + mdl1[a]) * (e.Y >> 4); //WIP
@@ -725,7 +722,7 @@ namespace Yoshi_Magic {
                                 "", "", "", "Exp", "Coins", "Coin Rate", "Item", "Item Chance", "Rare Item", "Rare Item Chance", "", "", "(Unused?)" };
             textBox1.Text = "";
             for (int i = 0; i < 0x1E; i++) {
-                textBox1.Text += Bits.getInt16(temp3, 0x54CBD8 + ((i * 2) + (listBox1.SelectedIndex * 0x3C))).ToString("X4") + " = " + desc[i] + "\r\n";
+                textBox1.Text += Bits.GetInt16(temp3, 0x54CBD8 + ((i * 2) + (listBox1.SelectedIndex * 0x3C))).ToString("X4") + " = " + desc[i] + "\r\n";
             }
         }
         private void toolStripButton4_Click(object sender, EventArgs e) {
@@ -744,7 +741,7 @@ namespace Yoshi_Magic {
             //int addr0 = 0x21DC54;
             ////Start loop?
             //int cmd = rom[addr0++]; eN += 1;
-            //int args = rom[(Bits.getInt32(rom, 0x3B98C4 + (0 << 2)) & 0x1FFFFFF) + cmd];
+            //int args = rom[(Bits.GetInt32(rom, 0x3B98C4 + (0 << 2)) & 0x1FFFFFF) + cmd];
             //int bitcount = args;
             //scriptingTest();
             //timer1.Enabled = !timer1.Enabled;

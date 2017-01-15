@@ -56,7 +56,7 @@ namespace Yoshi_Magic {
         }
         int prev = 0, cur = 0, next = 0;//0x2000000;
         private void scan(int addr) {
-            uint val = (uint)Bits.getInt32(rom, 0);
+            uint val = (uint)Bits.GetInt32(rom, 0);
             int i = 4; prev = 0; cur = 0; next = 0x2000000;
             while (true) {
                 int val2 = -1;
@@ -101,7 +101,7 @@ namespace Yoshi_Magic {
             }
             lb1.Items.Clear();
             for (int j = 0; j < addrs.Count; j++) {
-                int val3 = Bits.getInt32(rom, addrs[j]);
+                int val3 = Bits.GetInt32(rom, addrs[j]);
                 //if ((val3 & 0xFE000000) == 0xFA000000) { //BLX
                 //    lb1.Items.Add(j.ToString("X8") + " | " + addrs[j].ToString("X8") + " (Arm BLX: " + val3.ToString("X8") + ")");
                 //} else

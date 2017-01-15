@@ -11,11 +11,11 @@ namespace Yoshi_Magic {
         byte[] fat;
         public void openNDS(string filename) {
             header = Bits.openFilePart(filename, 0, 0x200);
-            string vstr = Bits.getString(header, 0xA0, 16);
+            string vstr = Bits.GetString(header, 0xA0, 16);
             if ((vstr != "MARIO&LUIGI2ARME") || (vstr != "MARIO&LUIGI3CLJE")) { return; }
-            //arm9 = Bits.openFilePart(filename, Bits.getInt32(header, 0x20), Bits.getInt32(header, 0x2C));
-            //arm7 = Bits.openFilePart(filename, Bits.getInt32(header, 0x30), Bits.getInt32(header, 0x3C));
-            fat = Bits.openFilePart(filename, Bits.getInt32(header, 0x48), Bits.getInt32(header, 0x4C));
+            //arm9 = Bits.openFilePart(filename, Bits.GetInt32(header, 0x20), Bits.GetInt32(header, 0x2C));
+            //arm7 = Bits.openFilePart(filename, Bits.GetInt32(header, 0x30), Bits.GetInt32(header, 0x3C));
+            fat = Bits.openFilePart(filename, Bits.GetInt32(header, 0x48), Bits.GetInt32(header, 0x4C));
             //If PIT:no compression; if BIS:decbis
 
         }
