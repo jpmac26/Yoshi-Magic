@@ -28,7 +28,7 @@ namespace Yoshi_Magic {
             } else {
                 int a = 0;
             }
-            return null;
+			throw new NotImplementedException();
         }
         //            Function decbis(ByVal File_ID As Integer) As Byte()
         //        Try

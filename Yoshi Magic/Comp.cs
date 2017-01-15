@@ -9,8 +9,6 @@ namespace Yoshi_Magic
     static class Comp { //Might just be a mem manager?
         //Superstar Saga Decompression ; Decompresses graphics and mini-game data.
         public static void mlssdecd(byte[] sBuf, int src, byte[] data2, int dest) {
-            //byte[] sBuf = Form1.rom.buffer;
-            //byte[] data2 = Form1.ram.buffer; // new byte[0x1ffff];
             src &= 0x1FFFFFF;
             dest &= 0xFFFFFF;
             src += (sBuf[src] >> 6) + 1;

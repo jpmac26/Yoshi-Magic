@@ -17,12 +17,4 @@ namespace Yoshi_Magic
 		/// </summary>
 		public Version ROMVersion { get; protected set; }
 	}
-	public enum Version
-	{
-		Unknown = -1,
-		NorthAmerica = 0,
-		Europe = 1,
-		Japan = 2,
-		NorthAmericaDemo = 3,
-	}
 }
