@@ -1,4 +1,5 @@
 ﻿using System;
+using Yoshi_Magic.Rom;
 
 namespace Yoshi_Magic
 {
@@ -27,16 +28,16 @@ namespace Yoshi_Magic
 			{
 				switch (ROM.ROMVersion)
 				{
-					case Version.NorthAmerica:
+					case Rom.Version.NorthAmerica:
 						Offsets = SuperstarSagaRom.NA_ENEMY_DB;
 						break;
-					case Version.Europe:
+					case Rom.Version.Europe:
 						Offsets = SuperstarSagaRom.EU_ENEMY_DB;
 						break;
-					case Version.Japan:
+					case System.Version.Japan:
 						Offsets = SuperstarSagaRom.J_ENEMY_DB;
 						break;
-					case Version.NorthAmericaDemo:
+					case Rom.Version.NorthAmericaDemo:
 						Offsets = SuperstarSagaRom.NADEMO_ENEMY_DB;
 						break;
 					default:

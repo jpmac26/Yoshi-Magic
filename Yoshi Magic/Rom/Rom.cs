@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -11,10 +12,42 @@ namespace Yoshi_Magic.Rom
 	/// </summary>
 	public abstract class Rom
 	{
+		protected BinaryReader reader;
+		protected BinaryWriter writer;
+
+		public Rom(String filePath)
+		{
+			byte[] rawData;
+			try
+			{
+				rawData = File.ReadAllBytes(filePath);
+			}
+			catch (IOException e)
+			{
+				throw new AggregateException("An error occurred during ROM loading", e);
+			}
+			Stream = new MemoryStream(rawData);
+			reader = new BinaryReader(Stream, Encoding.ASCII);
+			writer = new BinaryWriter(Stream, Encoding.ASCII);
+		}
+
+		public MemoryStream Stream { get; protected set; }
+
 		/// <summary>
-		/// Gets the raw data of the game's ROM file
+		/// Gets the in-memory copy of the raw data of the game's ROM file
 		/// </summary>
-		public byte[] RawData { get; protected set; }
+		public byte[] RawData
+		{
+			get
+			{
+				long currentPosition = Stream.Position;
+				Stream.Seek(0, SeekOrigin.Begin);
+				byte[] data = new byte[Stream.Length];
+				Stream.Read(data, 0, (int)Stream.Length);
+				Stream.Seek(currentPosition, SeekOrigin.Begin);
+				return data;
+			}
+		}
 		/// <summary>
 		/// Region that this ROM belongs to.
 		/// </summary>

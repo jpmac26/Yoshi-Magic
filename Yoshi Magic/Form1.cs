@@ -35,7 +35,7 @@ namespace Yoshi_Magic {
         }
         public static byte[] rom = null;
         public static byte[] ram = null;
-        //Public OpenFileDialog1 = ""
+
         byte[] temp3 =new byte[0x800000];//new byte[0x5E3000];
         unsafe private void OpenROM(string filename) {
             Properties.Settings.Default.LastRom = filename;

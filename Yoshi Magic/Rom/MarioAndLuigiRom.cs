@@ -10,6 +10,6 @@ namespace Yoshi_Magic.Rom
 	/// </summary>
 	public abstract class MarioAndLuigiRom : Rom
 	{
-		
+		public MarioAndLuigiRom(String filePath) : base(filePath) { }
 	}
 }

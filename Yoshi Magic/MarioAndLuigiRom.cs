@@ -1,4 +1,6 @@
 ﻿using System;
+using Yoshi_Magic.Rom;
+
 namespace Yoshi_Magic
 {
 	public abstract class MarioAndLuigiRom
@@ -15,6 +17,6 @@ namespace Yoshi_Magic
 		/// <summary>
 		/// Gets the version of this ROM.
 		/// </summary>
-		public Version ROMVersion { get; protected set; }
+		public Rom.Version ROMVersion { get; protected set; }
 	}
 }
