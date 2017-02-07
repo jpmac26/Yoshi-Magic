@@ -3,6 +3,7 @@ using Yoshi_Magic.Rom;
 
 namespace Yoshi_Magic
 {
+	[Obsolete("Use the classes in the Rom namespace")]
 	public abstract class MarioAndLuigiRom
 	{
 		/// <summary>

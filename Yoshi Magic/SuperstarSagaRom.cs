@@ -9,6 +9,7 @@ namespace Yoshi_Magic
 	/// Represents a Mario and Luigi: Superstar Saga ROM and contains the functions and properties specific. Superstar 
 	/// Saga was the first in the Mario and Luigi series, released on the Gameboy Advance.
 	/// </summary>
+	[Obsolete("Use the classes in the Rom namespace")]
 	public class SuperstarSagaRom : MarioAndLuigiRom
 	{
 		/// <summary>

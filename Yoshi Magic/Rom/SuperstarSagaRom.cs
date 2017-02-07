@@ -10,10 +10,8 @@ namespace Yoshi_Magic.Rom
 	/// </summary>
 	public class SuperstarSagaRom : MarioAndLuigiRom
 	{
-
 		public const String VersionPrefix = "MARIO&LUIGI";
 		public const String NorthAmericanDemoVersionString = "M&L DEMO USAB88E";
-
 		public const String NorthAmericanVersionSuffix = "UA88E";
 		public const String EuropeanVersionSuffix = "PA88P";
 		public const String JapaneseVersionSuffix = "JA88J";
